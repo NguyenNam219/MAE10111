@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Thi Trắc Nghiệm Nhân Ma trận</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax CDN -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- math.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
+    <style>
+        .matrix-option {
+            display: inline-block;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .matrix-option:hover {
+            background-color: #f3f4f6;
+        }
+        .correct {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+        .incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6 max-w-3xl">
+        <h1 class="text-3xl font-bold text-center mb-8">Đề Thi Trắc Nghiệm Nhân Ma trận</h1>
+        <div id="quiz-container" class="space-y-8"></div>
+        <div class="text-center mt-8">
+            <button id="submit-btn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Nộp bài</button>
+        </div>
+        <div id="result" class="mt-6 text-center text-lg font-semibold"></div>
+    </div>
+
+    <script>
+        // Dữ liệu câu hỏi
+        const questions = [
+            {
+                question: "Tính \\( A \\times B \\) với \\( A = \\begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\end{bmatrix} \\), \\( B = \\begin{bmatrix} 5 & 6 \\\\ 7 & 8 \\end{bmatrix} \\).",
+                options: [
+                    "\\begin{bmatrix} 19 & 22 \\\\ 43 & 50 \\end{bmatrix}",
+                    "\\begin{bmatrix} 10 & 12 \\\\ 21 & 24 \\end{bmatrix}",
+                    "\\begin{bmatrix} 5 & 12 \\\\ 21 & 32 \\end{bmatrix}",
+                    "\\begin{bmatrix} 19 & 20 \\\\ 42 & 50 \\end{bmatrix}"
+                ],
+                correct: 0 // Đáp án đúng là options[0]
+            },
+            {
+                question: "Tính \\( A \\times B \\) với \\( A = \\begin{bmatrix} 2 & 0 \\\\ 1 & 3 \\end{bmatrix} \\), \\( B = \\begin{bmatrix} 1 & 4 \\\\ 2 & 5 \\end{bmatrix} \\).",
+                options: [
+                    "\\begin{bmatrix} 2 & 8 \\\\ 7 & 19 \\end{bmatrix}",
+                    "\\begin{bmatrix} 4 & 8 \\\\ 7 & 17 \\end{bmatrix}",
+                    "\\begin{bmatrix} 2 & 4 \\\\ 1 & 15 \\end{bmatrix}",
+                    "\\begin{bmatrix} 1 & 8 \\\\ 7 & 19 \\end{bmatrix}"
+                ],
+                correct: 0
+            },
+            {
+                question: "Tính \\( A \\times B \\) với \\( A = \\begin{bmatrix} 1 & -1 \\\\ 2 & 3 \\end{bmatrix} \\), \\( B = \\begin{bmatrix} 0 & 2 \\\\ 1 & -1 \\end{bmatrix} \\).",
+                options: [
+                    "\\begin{bmatrix} -1 & 3 \\\\ 3 & 1 \\end{bmatrix}",
+                    "\\begin{bmatrix} 1 & 3 \\\\ 3 & 1 \\end{bmatrix}",
+                    "\\begin{bmatrix} -1 & 1 \\\\ 3 & 7 \\end{bmatrix}",
+                    "\\begin{bmatrix} -1 & 3 \\\\ 7 & 1 \\end{bmatrix}"
+                ],
+                correct: 0
+            },
+            {
+                question: "Tính \\( A \\times B \\) với \\( A = \\begin{bmatrix} 3 & 2 \\\\ 0 & 1 \\end{bmatrix} \\), \\( B = \\begin{bmatrix} 1 & 0 \\\\ 4 & 2 \\end{bmatrix} \\).",
+                options: [
+                    "\\begin{bmatrix} 11 & 4 \\\\ 4 & 2 \\end{bmatrix}",
+                    "\\begin{bmatrix} 3 & 4 \\\\ 4 & 2 \\end{bmatrix}",
+                    "\\begin{bmatrix} 11 & 2 \\\\ 4 & 1 \\end{bmatrix}",
+                    "\\begin{bmatrix} 11 & 4 \\\\ 0 & 2 \\end{bmatrix}"
+                ],
+                correct: 0
+            },
+            {
+                question: "Tính \\( A \\times B \\) với \\( A = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\end{bmatrix} \\), \\( B = \\begin{bmatrix} 2 & 3 \\\\ 4 & 5 \\end{bmatrix} \\).",
+                options: [
+                    "\\begin{bmatrix} 2 & 3 \\\\ 4 & 5 \\end{bmatrix}",
+                    "\\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\end{bmatrix}",
+                    "\\begin{bmatrix} 2 & 3 \\\\ 0 & 1 \\end{bmatrix}",
+                    "\\begin{bmatrix} 1 & 3 \\\\ 4 & 5 \\end{bmatrix}"
+                ],
+                correct: 0
+            }
+        ];
+
+        // Hàm hiển thị câu hỏi
+        function renderQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'bg-white p-6 rounded-lg shadow-md';
+                questionDiv.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">Câu ${index + 1}: ${q.question}</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        ${q.options.map((option, i) => `
+                            <label class="matrix-option">
+                                <input type="radio" name="q${index}" value="${i}" class="mr-2">
+                                \\[${option}\\]
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="feedback${index}" class="mt-4"></div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            MathJax.typeset(); // Render lại MathJax sau khi thêm nội dung
+        }
+
+        // Hàm kiểm tra đáp án
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback${index}`);
+                if (selected) {
+                    const answer = parseInt(selected.value);
+                    if (answer === q.correct) {
+                        score++;
+                        feedbackDiv.innerHTML = '<span class="text-green-600">Đúng!</span>';
+                        selected.parentElement.classList.add('correct');
+                    } else {
+                        feedbackDiv.innerHTML = '<span class="text-red-600">Sai! Đáp án đúng là: \\[' + q.options[q.correct] + '\\]</span>';
+                        selected.parentElement.classList.add('incorrect');
+                        document.querySelector(`input[name="q${index}"][value="${q.correct}"]`).parentElement.classList.add('correct');
+                    }
+                } else {
+                    feedbackDiv.innerHTML = '<span class="text-red-600">Vui lòng chọn một đáp án!</span>';
+                }
+            });
+            document.getElementById('result').innerHTML = `Bạn đúng ${score}/5 câu.`;
+            MathJax.typeset(); // Render lại MathJax cho phản hồi
+        }
+
+        // Gắn sự kiện cho nút nộp bài
+        document.getElementById('submit-btn').addEventListener('click', checkAnswers);
+
+        // Khởi tạo bài thi
+        renderQuiz();
+    </script>
+</body>
+</html>
